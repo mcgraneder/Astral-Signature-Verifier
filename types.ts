@@ -1,0 +1,1 @@
+export type AuthContoller = typeof import("c:/Users/mcgra/OneDrive/Documents/AstralBridgeSigVerifier/AstralBridegSignatureVerifier/routes/auth")
