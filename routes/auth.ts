@@ -1,9 +1,10 @@
 import express, { Router } from "express"
-import { verify } from "../controllers/auth"
+import { register, verify } from "../controllers/auth"
 
 const router: Router = express.Router()
 
 //router routes
 router.route("/verify").post(verify)
+router.route("/verify").post(register)
 
 export default router
