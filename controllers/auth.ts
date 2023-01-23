@@ -15,7 +15,7 @@ export const register = async(req: Request, res: Response, next: NextFunction) =
     const userExists = await doesUserExist(publicAddress)
 
     if (!nonce || !signature || userExists) {
-        return next(new errorResponse(
+        return next(new ErrorResponse(
             "User already exists. please use a unique address", 400, 3
         ));
     }
@@ -38,17 +38,17 @@ export const register = async(req: Request, res: Response, next: NextFunction) =
 				error: 'Signature verification failed',
 			});
 		}
-    } catch(err: Error) {
+    } catch(err: unknown) {
         next(err);
     }
 }
 
 export const verify = async(req: Request, res: Response, next: NextFunction) => {
     const { signature, nonce, publicAddress, } = req.body;
-    const userExists = await doesUserExist(publicAddress)
+    const user: User | null = await User.findOne({ publicAddress }).select("+publicAddress");
 
-    if (!nonce || !userExists || !signature) {
-        return next(new errorResponse(
+    if (!nonce || !user || !signature) {
+        return next(new ErrorResponse(
             "Please provider a public address and nonce", 400, 3
         ));
     }
@@ -67,7 +67,7 @@ export const verify = async(req: Request, res: Response, next: NextFunction) => 
 				error: 'Signature verification failed',
 			});
 		}
-    } catch(err: Error) {
+    } catch(err: unknown) {
         next(err);
     }
 }

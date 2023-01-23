@@ -3,6 +3,7 @@ import { AuthContoller } from "./types"
 import connectToDB from "./config/db"
 import express, { Express } from "express"
 import http from "http"
+import errorHandler from "./middleware/error"
 
 connectToDB()
 
@@ -10,6 +11,7 @@ const app: Express = express()
 
 app.use(express.json())
 app.use("/api/auth", (): Promise<AuthContoller> => import("./routes/auth"))
+app.use(errorHandler)
 
 const PORT: string | number = process.env.port || 5000
 
