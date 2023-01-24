@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken")
 import mongoose from "mongoose";
 
 export interface IUser {
@@ -21,6 +22,14 @@ const UserSchema: mongoose.Schema<
         select: false
     }
 })
+
+UserSchema.methods.getSignedToken = function() {
+    return jwt.sign(
+        { id: this._id }, 
+        process.env.JWT_SECRET, 
+        { expiresIn: process.env.JWT_EXPIRE}
+    )
+}
 
 const User: mongoose.Model<
     IUser, {}, {}, {}, any

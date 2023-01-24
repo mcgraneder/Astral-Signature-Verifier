@@ -4,14 +4,32 @@ import connectToDB from "./config/db"
 import express, { Express } from "express"
 import http from "http"
 import errorHandler from "./middleware/error"
+import routes from "./routes/auth"
+import privateRoutes from "./routes/private"
+import cors from "cors"
+import bodyParser = require("body-parser")
 
 connectToDB()
 
 const app: Express = express()
 
 app.use(express.json())
-app.use("/api/auth", (): Promise<AuthContoller> => import("./routes/auth"))
+app.use(bodyParser.urlencoded({ extended: true }))
+
+// parse application/json
+app.use(bodyParser.json())
+app.use("/api/auth", routes)
+app.use("/api/private", privateRoutes)
+
 app.use(errorHandler)
+
+const corsOptions ={
+    origin:'*', 
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200,
+ }
+ 
+app.use(cors(corsOptions)) // Use this after the variable declaration
 
 const PORT: string | number = process.env.port || 5000
 
