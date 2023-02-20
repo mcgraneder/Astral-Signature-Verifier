@@ -9,31 +9,21 @@ import privateRoutes from "./routes/private"
 import cors from "cors"
 import bodyParser = require("body-parser")
 
-connectToDB()
-
 const app: Express = express()
+app.use(express.json());
+app.use(cors({ origin: "*" }));
 
-app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-
-// parse application/json
-app.use(bodyParser.json())
+app.get("/", (req, res) => {
+  res.status(200).send({ result: "ok" });
+});
 app.use("/api/auth", routes)
 app.use("/api/private", privateRoutes)
 
 app.use(errorHandler)
 
-const corsOptions ={
-    origin:'*', 
-    credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200,
- }
- 
-app.use(cors(corsOptions)) // Use this after the variable declaration
+const PORT: string | number = process.env.port || 8000
 
-const PORT: string | number = process.env.port || 5000
-
-const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+// const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
  
 const StartServer = (): void => {
     app.use(express.urlencoded({ extended: true }));
@@ -44,7 +34,12 @@ const StartServer = (): void => {
     }).close((): void => process.exit(1));
 };
 
-process.on("unhandledRejection", (err: Error, promise: Promise<unknown>) => {
-    console.log(`Logged error ${err}`)
-    server.close((): void => process.exit(1));
-})
+// process.on("unhandledRejection", (err: Error, promise: Promise<unknown>) => {
+//     console.log(`Logged error ${err}`)
+//     server.close((): void => process.exit(1));
+// })
+
+connectToDB().then(() =>
+  app.listen(PORT, () => {
+    console.log(`listening at http://localhost:${PORT}`);
+  }))
